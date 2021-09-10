@@ -45,7 +45,7 @@ export default class Application extends EventEmitter {
             this.data.count = data.count
 
             let next = data.next;
-            let numberOfPages = count / 10;
+            let numberOfPages = data.count / 10;
 
             for (let i = 1; i <= numberOfPages; i++) {
               next = next.substring(0, next.length - 1) + i;
