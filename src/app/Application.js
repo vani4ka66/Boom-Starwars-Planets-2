@@ -14,7 +14,10 @@ export default class Application extends EventEmitter {
     super();
 
     this.config = config;
-    this.data = {};
+    this.data = {
+      'count': 0,
+      'planets': []
+    };
 
     this.init();
   }
@@ -31,6 +34,36 @@ export default class Application extends EventEmitter {
    */
   async init() {
     // Initiate classes and wait for async operations here.
+
+    await fetch('https://swapi.boom.dev/api/')
+      .then(response => response.json())
+      .then(data => {
+
+        fetch(data.planets)
+          .then(response => response.json())
+          .then(data => {
+            this.data.count = data.count
+
+            let next = data.next;
+            let numberOfPages = count / 10;
+
+            for (let i = 1; i <= numberOfPages; i++) {
+              next = next.substring(0, next.length - 1) + i;
+
+              if (next !== null) {
+
+                fetch(next)
+                  .then(response => response.json())
+                  .then(data => {
+
+                    data.results.map(i => {
+                      this.data.planets.push(i);
+                    })
+                  });
+              }
+            }
+          });
+      });
 
     this.emit(Application.events.APP_READY);
   }
